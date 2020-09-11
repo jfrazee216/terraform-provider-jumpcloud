@@ -44,6 +44,7 @@ func resourceUser() *schema.Resource {
 				Type:     schema.TypeMap,
 				Elem: &schema.Schema{
 				  Type: schema.TypeString,
+				  Optional: true,
 				},
 			  },
 			// Currently, only the options necessary for our use case are implemented
@@ -77,7 +78,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		Lastname:                    d.Get("lastname").(string),
 		Password:                    d.Get("password").(string),
 		EnableUserPortalMultifactor: d.Get("enable_mfa").(bool),
-		Attributes:                  d.Get("attributes").(string),
+		Attributes:                  d.Get("attributes").([]interface{}),
 	}
 	req := map[string]interface{}{
 		"body": payload,
@@ -144,7 +145,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		Lastname:                    d.Get("lastname").(string),
 		Password:                    d.Get("password").(string),
 		EnableUserPortalMultifactor: d.Get("enable_mfa").(bool),
-		Attributes:                  d.Get("attributes").(bool),
+		Attributes:                  d.Get("attributes").([]interface{}),
 	}
 
 	req := map[string]interface{}{
