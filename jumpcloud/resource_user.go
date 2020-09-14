@@ -40,6 +40,26 @@ func resourceUser() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"attributes": &schema.Schema{
+				Type:     schema.TypeList,
+				Required: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": &schema.Schema{
+							Type:          schema.TypeString,
+							Optional:      true,
+						},
+						"value": &schema.Schema{
+							Type:          schema.TypeString,
+							Optional:      true,
+						},
+						"_id": &schema.Schema{
+							Type:          schema.TypeString,
+							Optional:      true,
+						},
+					},
+				},
+			},
 			// Currently, only the options necessary for our use case are implemented
 			// JumpCloud offers a lot more
 		},
@@ -71,6 +91,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		Lastname:                    d.Get("lastname").(string),
 		Password:                    d.Get("password").(string),
 		EnableUserPortalMultifactor: d.Get("enable_mfa").(bool),
+		Attributes:                  d.Get("attributes").([]interface{}),
 	}
 	req := map[string]interface{}{
 		"body": payload,
@@ -118,6 +139,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	if err := d.Set("enable_mfa", res.EnableUserPortalMultifactor); err != nil {
 		return err
 	}
+	if err := d.Set("attributes", res.Attributes); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -134,6 +158,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		Lastname:                    d.Get("lastname").(string),
 		Password:                    d.Get("password").(string),
 		EnableUserPortalMultifactor: d.Get("enable_mfa").(bool),
+		Attributes:                  d.Get("attributes").([]interface{}),
 	}
 
 	req := map[string]interface{}{
